@@ -29,7 +29,7 @@ semi-supervised nonnegative matrix factorization with convex coefficients
 **-r, --reps**  | Number of Repetitions for the algorithm. Default: 5 
 **-o, --tol**  | Tolerance Parameter. Default: 1e-5
 
-### Usage Examples###
+### Usage Examples ###
 
 `python ssnmfcc.py V.tsv -c 3`\
 `python ssnmfcc.py V.tsv -W W.tsv`\
