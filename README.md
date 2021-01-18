@@ -1,5 +1,5 @@
 # ssnmf
-semi-supervised nonnegative matrix factorization algorithm
+semi-supervised nonnegative matrix factorization with convex coefficients
 
 ### Requirements ###
 * Python 3.x
