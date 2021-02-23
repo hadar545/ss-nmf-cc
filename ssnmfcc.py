@@ -14,7 +14,9 @@ import numpy.linalg as LA
 from cvxopt import matrix, solvers
 import warnings, sys
 import argparse
+
 warnings.filterwarnings("ignore", category=DeprecationWarning)
+
 
 def init_d(func):
     """
@@ -42,7 +44,8 @@ class CF_NMF:
     """
 
     @init_d
-    def __init__(self, V, W=None, H=None, new_cols=0, w_init=np.empty(0), h_init=np.empty(0), iters=50, runs=5, tol=1e-3, base_num=5, err_ord='fro'):
+    def __init__(self, V, W=None, H=None, lower_bound=0, upper_bound=1,
+                 new_cols=0, w_init=np.empty(0), h_init=np.empty(0), iters=50, runs=5, tol=1e-3, base_num=5, err_ord='fro'):
         np.set_printoptions(suppress=True)
         warnings.simplefilter(action='ignore', category=FutureWarning)
         solvers.options['show_progress'] = False
@@ -67,7 +70,7 @@ class CF_NMF:
         pos = np.diag(np.ones(N))
         neg = np.diag(-np.ones(N))
         self.W_G = matrix(np.vstack((pos, neg)))
-        self.W_h = matrix(np.hstack((np.ones(N), np.zeros(N))))
+        self.W_h = matrix(np.hstack((np.ones(N) * self.upper_bound, np.ones(N) * self.lower_bound)))
 
     def init_W(self):
         M, K = self.V.shape[0], self.new_cols if self.W is not None else self.base_num
@@ -168,6 +171,14 @@ def parse():
     parser.add_argument('V', help='path to .tsv or .csv file for V matrix. Assumes no header exists.')
     parser.add_argument('-W', help='path to .tsv or .csv file for W matrix. Can be partial. Assumes no header exists.', default='', type=str)
     parser.add_argument('-H', help='path to .tsv or .csv file for H matrix. Assumes no header exists.', default='', type=str)
+
+    parser.add_argument('-lb', '--lower_bound', help='Float representing the lower bound for the values'
+                                                     'of the matrices V and W. Valid values are greater or equal to zero. \n'
+                                                     'Default: 0', default=0, type=float)
+    parser.add_argument('-ub', '--upper_bound', help='Float representing the upper bound for the values'
+                                                     'of the matrices V and W. Valid values are greater than zero.\n'
+                                                     'Default: 1', default=1, type=float)
+
     parser.add_argument('-c', '--free_w_cols', help='number of free columns to add to W. Default: 0', default=0, type=int)
     parser.add_argument('-iw', '--init_w',
                         help='Comma separated string, stating the type of distribution (first argument) and parameters '
@@ -191,6 +202,8 @@ def check_args_validity(args):
     if args.W == '' and args.H == '':
         assert args.free_w_cols
     assert args.W == '' or args.H == ''
+    assert args.lower_bound >= 0
+    assert args.upper_bound > 0
 
 
 def parse_init_param(iparams):
@@ -215,6 +228,7 @@ if __name__ == '__main__':
     check_args_validity(args)
     V, W, H = load_files([args.V, args.W, args.H])
     wi_params, hi_params = parse_init_param(args.init_w), parse_init_param(args.init_h)
-    c_nmf = CF_NMF(V, W=W, H=H, new_cols=args.free_w_cols, w_init=wi_params, h_init=hi_params, iters=args.iter_num, runs=args.reps, tol=args.tol)
+    c_nmf = CF_NMF(V, W=W, H=H, lower_bound=args.lower_bound, upper_bound=args.upper_bound,
+                   new_cols=args.free_w_cols, w_init=wi_params, h_init=hi_params, iters=args.iter_num, runs=args.reps, tol=args.tol)
     c_nmf.factorize()
     c_nmf.save_result()
