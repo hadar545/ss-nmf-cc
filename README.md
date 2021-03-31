@@ -22,6 +22,8 @@ semi-supervised nonnegative matrix factorization with convex coefficients
 ------------- | -------------
 **-W**  | Path to .tsv or .csv file for W matrix. Can be partial. Assumes no header exists. Atlas matrix of M features over K bases (e.g. tissues).
 **-H**  | Path to .tsv or .csv file for H matrix. Assumes no header exists. Coefficients matrix of K bases over N samples such that each column takes the convex combination of a single sample.
+**-lb, --lower_bound**  | Float representing the lower bound for the values of the matrices V and W. Valid values are greater or equal to zero. Default: 0
+**-ub, --upper_bound**  | Float representing the upper bound for the values of the matrices V and W. Valid values are greater than zero. Default: 1
 **-c, --free_w_cols**  | Number of free columns to add to W. Default: 0
 **-iw, --init_w**  | Comma separated string, stating the type of distribution (first argument) and parameters (second and so on) for W initialization. default="normal,0,1". Valid distribution values: normal,beta.
 **-ih, --init_h**  | Comma separated string, stating the type of distribution (first argument) and parameters (second and so on) for H initialization. default="beta,70,100". Valid distribution values: normal,beta.
