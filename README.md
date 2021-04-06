@@ -33,6 +33,9 @@ semi-supervised nonnegative matrix factorization with convex coefficients
 
 ### Usage Examples ###
 
+![alt text](https://github.com/hadar545/ss-nmf-cc/blob/main/exapmle_vis.jpg?raw=true)
+
+
 `python ssnmfcc.py V.tsv -c 3`\
 (1.) `python ssnmfcc.py V.tsv -W W.tsv`\
 (2.) `python ssnmfcc.py V.tsv -W W.tsv -c 2  `\
